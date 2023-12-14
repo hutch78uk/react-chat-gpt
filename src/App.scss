@@ -8,21 +8,31 @@ body {
   }
 
   .assistant, .user {
+    border-radius: 10px;
+    padding: 10px;
     margin-bottom: 10px;
   }
 
   .assistant {
     background-color: $green-100;
     border: 1px solid $green-400;
-    border-radius: 10px;
-    padding: 10px;
-    text-align: right;
+    margin-left: 40px;
   }
 
   .user {
     background-color: $blue-100;
     border: 1px solid $blue-400;
-    border-radius: 10px;
-    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin-right: 40px;
+
+    input {
+      background-color: $blue-100;
+      border: 0;
+      margin-right: 10px;
+      outline: 0;
+      padding: 0 5px;
+      width: 100%;
+    }
   }
 }

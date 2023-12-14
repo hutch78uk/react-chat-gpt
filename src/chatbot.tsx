@@ -1,6 +1,6 @@
-// Chatbot.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
+// import { REACT_APP_OPENAI_API_KEY } from './setupEnv';
 
 interface Message {
   role: string;
@@ -22,13 +22,6 @@ const Chatbot: React.FC = () => {
     console.log(`Name is: ${name}`);
   };
 
-  // const [department, setDept] = useState<string | undefined>('');
-  // const handleDeptChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selectedDept = event.target.value;
-  //   setDepartment(selectedDept);
-  //   console.log(`Department is: ${department}`);
-  // };
-  // State to store the selected department
   const [department, setDepartment] = useState<string | undefined>('');
 
   // Event handler for dropdown change
@@ -44,6 +37,8 @@ const Chatbot: React.FC = () => {
     }
   };
 
+  const [showInputBox, setShowInputBox] = useState(false); // Added state for conditional rendering
+
   const sendMessage = async () => {
     try {
       const response = await axios.post(
@@ -51,14 +46,21 @@ const Chatbot: React.FC = () => {
         {
           model: 'gpt-3.5-turbo',
           messages: [
-            // ... your existing system and user messages
+            { role: 'system', content: `You are a helpful assistant for a company HR department in the UK. You should always greet them using their name and department.` },
+            { role: 'system', content: `You are speaking to a company employee, ${name}, who works in ${department}` },
+            { role: 'system', content: `UK employees have a holiday allowance of 25 days per year.` },
+            { role: 'system', content: `Company HR policy states employees must clear provisional time off with their line manager.` },
+            { role: 'system', content: `Company HR policy states that at peak times only one employee can be off at any point. Holiday requests may not be approved under certain circumstances` },
+            { role: 'system', content: `Company policy states that employees must give four weeks notice for time off, or six weeks during peak times.` },
+            { role: 'system', content: `Company policy states that IT department employees must give an extra weeks notice for time off.` },            
             { role: 'user', content: inputMessage },
           ],
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: '', // Replace with your actual API key - Bearer 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
+            Authorization: 'Bearer XXXXXX'
+            // Authorization: `Bearer ${REACT_APP_OPENAI_API_KEY}`,
           },
         }
       );
@@ -70,6 +72,11 @@ const Chatbot: React.FC = () => {
   
       // Update the conversation with the user's input and the assistant's response
       setConversation([...conversation, { role: 'user', content: inputMessage }, newAssistantMessage]);
+
+      // Show the input box after the first question has been asked
+      if (!showInputBox) {
+        setShowInputBox(true);
+      }
   
       // Clear the input field after sending the message
       setInputMessage('');
@@ -101,19 +108,21 @@ const Chatbot: React.FC = () => {
         </select>
       </div>
 
-      <div className='mb-3' style={fieldWidthStyle}>
-        <label htmlFor="question" className="form-label">How can we help?</label>
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Type your question here..."
-          className="me-3 mb-3 form-control"
-          id='question'
-          onKeyDown={handleKeyDown} // Add the event listener for the "keydown" event
-        />
-        <button onClick={sendMessage} className='btn btn-primary'>Send</button>
-      </div>
+      {!showInputBox && (
+        <div className='mb-3' style={fieldWidthStyle}>
+          <label htmlFor="question" className="form-label">How can we help?</label>
+          <input
+            type="text"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder="Type your question here..."
+            className="me-3 mb-3 form-control"
+            id='question'
+            onKeyDown={handleKeyDown} // Add the event listener for the "keydown" event
+          />
+          <button onClick={sendMessage} className='btn btn-primary'>Send</button>
+        </div>
+      )}
 
       <div style={fieldWidthStyle}>
         {conversation.map((message, index) => (
@@ -121,6 +130,19 @@ const Chatbot: React.FC = () => {
             {message.content}
           </div>
         ))}
+
+        {showInputBox && (
+          <div className="user">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              placeholder="Type your message here..."
+              onKeyDown={handleKeyDown} // Add the event listener for the "keydown" event
+            />
+            <button onClick={sendMessage} className='btn btn-primary'>Send</button>
+          </div>
+        )}
       </div>
     </div>
   );
