@@ -22,10 +22,26 @@ const Chatbot: React.FC = () => {
     console.log(`Name is: ${name}`);
   };
 
-  const [department, setDept] = useState<string>('');
+  // const [department, setDept] = useState<string | undefined>('');
+  // const handleDeptChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedDept = event.target.value;
+  //   setDepartment(selectedDept);
+  //   console.log(`Department is: ${department}`);
+  // };
+  // State to store the selected department
+  const [department, setDepartment] = useState<string | undefined>('');
+
+  // Event handler for dropdown change
   const handleDeptChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setDept(event.target.value);
-    console.log(`Department is: ${department}`);
+    const selectedDept = event.target.value;
+    setDepartment(selectedDept);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Check if the pressed key is the "Enter" key (key code 13)
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
   };
 
   const sendMessage = async () => {
@@ -35,31 +51,33 @@ const Chatbot: React.FC = () => {
         {
           model: 'gpt-3.5-turbo',
           messages: [
-            { role: 'system', content: `You are a helpful assistant for a company HR department. You should always welcome employees to the chat by asking their name.` },
-            { role: 'system', content: `You are speaking to a company employee, ${name}, who works in ${department}` },
-            { role: 'system', content: `Joe Noname has a holiday allowance of 25 days, and has used 4.` },
-            { role: 'system', content: `Company peak times are during the summer.` },
-            { role: 'system', content: `Company HR policy states employees must clear provisional time off with their line manager.` },
-            { role: 'system', content: `Company HR policy states that at peak times only one employee can be off at any point.` },
-            { role: 'system', content: `Company policy states that employees must give four weeks notice for time off, or six weeks during peak times.` },
-            { role: 'system', content: `Company policy states that IT department employees must give an extra weeks notice for time off.` },            
+            // ... your existing system and user messages
             { role: 'user', content: inputMessage },
           ],
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer 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', // Replace with your actual API key
+            Authorization: '', // Replace with your actual API key - Bearer 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
           },
         }
       );
-
-      const newMessage: Message = { role: 'assistant', content: response.data.choices[0].message.content };
-      setConversation([...conversation, newMessage]);
+  
+      const newAssistantMessage: Message = {
+        role: 'assistant',
+        content: response.data.choices[0].message.content,
+      };
+  
+      // Update the conversation with the user's input and the assistant's response
+      setConversation([...conversation, { role: 'user', content: inputMessage }, newAssistantMessage]);
+  
+      // Clear the input field after sending the message
+      setInputMessage('');
     } catch (error) {
       console.error('Error making ChatGPT API request:', error);
     }
   };
+  
 
   return (
     <div>
@@ -92,6 +110,7 @@ const Chatbot: React.FC = () => {
           placeholder="Type your question here..."
           className="me-3 mb-3 form-control"
           id='question'
+          onKeyDown={handleKeyDown} // Add the event listener for the "keydown" event
         />
         <button onClick={sendMessage} className='btn btn-primary'>Send</button>
       </div>

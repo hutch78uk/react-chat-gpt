@@ -1,7 +1,28 @@
+@import "~bootstrap/scss/bootstrap";
+
 body {
   margin: 25px !important;
 
   h1 {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+
+  .assistant, .user {
+    margin-bottom: 10px;
+  }
+
+  .assistant {
+    background-color: $green-100;
+    border: 1px solid $green-400;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: right;
+  }
+
+  .user {
+    background-color: $blue-100;
+    border: 1px solid $blue-400;
+    border-radius: 10px;
+    padding: 10px;
   }
 }
