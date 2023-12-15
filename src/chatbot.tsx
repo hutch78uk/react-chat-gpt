@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-// import { REACT_APP_OPENAI_API_KEY } from './setupEnv';
 
 interface Message {
   role: string;
   content: string;
+}
+
+const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+if (!apiKey) {
+  throw new Error('API key not found');
 }
 
 const Chatbot: React.FC = () => {
@@ -19,7 +23,6 @@ const Chatbot: React.FC = () => {
   const [name, setName] = useState<string>('');
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
-    console.log(`Name is: ${name}`);
   };
 
   const [department, setDepartment] = useState<string | undefined>('');
@@ -59,8 +62,7 @@ const Chatbot: React.FC = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer XXXXXX'
-            // Authorization: `Bearer ${REACT_APP_OPENAI_API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
           },
         }
       );
