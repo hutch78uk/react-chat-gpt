@@ -49,7 +49,8 @@ const Chatbot: React.FC = () => {
         {
           model: 'gpt-3.5-turbo',
           messages: [
-            { role: 'system', content: `You are a helpful assistant for a company HR department in the UK. You should always greet them using their name and department.` },
+            { role: 'system', content: `You are a helpful assistant for a company HR department in the UK. You should greet them using their name and department at the start of the chat.` },
+            { role: 'system', content: `You should greet them using their name and department at the start of the chat. If no name is given you should ask for it.` },
             { role: 'system', content: `You are speaking to a company employee, ${name}, who works in ${department}` },
             { role: 'system', content: `UK employees have a holiday allowance of 25 days per year.` },
             { role: 'system', content: `Company HR policy states employees must clear provisional time off with their line manager.` },
